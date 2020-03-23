@@ -3,7 +3,7 @@
     <img src="./assets/logo.png">
     <div>
       <button @click="startHacking">Start</button>
-      <Drawer ref="drawer" :show-drawer.sync="showDrawer"></Drawer>
+      <Drawer ref="drawer" :visible.sync="visible" :before-close="handleClose"></Drawer>
     </div>
   </div>
 </template>
@@ -14,7 +14,9 @@ export default {
   name: "App",
   data () {
     return {
-      showDrawer: true,
+      direction: 'direction',
+      customClass: 'customClass',
+      visible: true,
       demo: true
     };
   },
@@ -24,18 +26,15 @@ export default {
   methods: {
     startHacking() {
       console.log('startHacking');
-      // this.showDrawer = !this.showDrawer;
-      // this.demo = !this.demo;
-      this.$refs.drawer.updateAnimation();
+      this.visible = true;
+    },
+    handleClose(done) {
+      done();
     }
   }
 };
 </script>
 <style>
-button {
-  position: absolute;
-  bottom: 0px;
-}
 #app {
   font-family: Helvetica, sans-serif;
   text-align: center;

@@ -1,75 +1,175 @@
 <template>
-  <div v-show="showDrawer" class="drawer" :style="animationDirection">
-    <button aria-label="close" type="button" class="el-drawer__close-btn"><i class="el-dialog__close el-icon el-icon-close"></i></button>
-      <span>test text</span>
-  </div>
+  <transition name="drawer-fade">
+    <div v-show="visible" class="drawer__wrapper">
+      <div
+        class="drawer__container"
+        :class="visible && 'drawer__open'"
+        @click.self="handleWrapperClick"
+      >
+        <div class="drawer ttb" style="height: 50%">
+          <header>test header</header>
+          <span>test text</span>
+        </div>
+      </div>
+    </div>
+  </transition>
 </template>
 <script>
 export default {
   name: "Drawer",
-  data () {
-    return {
-      animationDirection: "animation-name: t2b-drawer-out; height:0%",
-      animationDirectionList: ["animation-name: t2b-drawer-in; height:80%", "animation-name: t2b-drawer-out; height:0%"]
-    }
+  data() {
+    return {};
   },
   props: {
-    showDrawer: {
+    visible: {
       type: Boolean,
       default: false
     },
-    animation: {
-      type: String,
-      default: "animation-name: t2b-drawer-out; height:0%"
+    wrapperClosable: {
+      type: Boolean,
+      default: true
+    },
+    beforeClose: {
+      type: Function
     }
   },
   methods: {
-    updateAnimation() {
-      // if(false == val) {
-      //   this.animationDirection = "animation-name: t2b-drawer-out; height:0%";
-      // } else {
-      //   this.animationDirection = "animation-name: t2b-drawer-in; height:80%";
-      // }
-      this.animationDirection = "animation-name: t2b-drawer-out; height:0%";
+    hide(cancel) {
+      if (cancel !== false) {
+        this.$emit("update:visible", false);
+        this.$emit("close");
+        if (this.destroyOnClose === true) {
+          this.rendered = false;
+        }
+        this.closed = true;
+      }
+    },
+    handleWrapperClick() {
+      if (this.wrapperClosable) {
+        this.closeDrawer();
+      }
+    },
+    closeDrawer() {
+      if (typeof this.beforeClose === "function") {
+        this.beforeClose(this.hide);
+      } else {
+        this.hide();
+      }
     }
   }
 };
 </script>
 <style>
+@-webkit-keyframes el-drawer-fade-in {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes el-drawer-fade-in {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes ttb-drawer-in {
+  0% {
+    -webkit-transform: translate(0, -100%);
+    transform: translate(0, -100%);
+  }
+
+  100% {
+    -webkit-transform: translate(0, 0);
+    transform: translate(0, 0);
+  }
+}
+
+@-webkit-keyframes ttb-drawer-out {
+  0% {
+    -webkit-transform: translate(0, 0);
+    transform: translate(0, 0);
+  }
+
+  100% {
+    -webkit-transform: translate(0, -100%);
+    transform: translate(0, -100%);
+  }
+}
+
+@keyframes ttb-drawer-out {
+  0% {
+    -webkit-transform: translate(0, 0);
+    transform: translate(0, 0);
+  }
+
+  100% {
+    -webkit-transform: translate(0, -100%);
+    transform: translate(0, -100%);
+  }
+}
+
+.drawer-fade-enter-active {
+  -webkit-animation: el-drawer-fade-in 0.3s;
+  animation: el-drawer-fade-in 0.3s;
+}
+
+.drawer-fade-leave-active {
+  animation: el-drawer-fade-in 0.3s reverse;
+}
+
 .drawer {
-  background-color: gray;
-  position: absolute;
   left: 0;
-  top: 0;
+  right: 0;
   width: 100%;
-  height: 80%;
-  z-index: 999;
-  color: #fff;
-  animation-duration: 500ms;
-  animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
-  animation-delay: 0ms;
-  animation-iteration-count: 1;
-  animation-direction: normal;
-  animation-fill-mode: none;
-  animation-play-state: running;
+  height: 50%;
+  position: absolute;
+  box-sizing: border-box;
+  background-color: #fff;
+  display: flex;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  -webkit-box-shadow: 0 8px 10px -5px rgba(0, 0, 0, 0.2),
+    0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 8px 10px -5px rgba(0, 0, 0, 0.2),
+    0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12);
 }
 
-@keyframes t2b-drawer-in {
-    0% {
-        transform: translateY(-100%)
-    }
-    to {
-        transform: translate(0)
-    }
+.drawer__wrapper {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  overflow: hidden;
+  margin: 0;
 }
 
-@keyframes t2b-drawer-out {
-    0% {
-        transform: translate(0)
-    }
+.drawer__container {
+  position: relative;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  height: 100%;
+  width: 100%;
+}
 
-    to {
-        transform: translateY(-100%)
-    }
+.drawer__open .drawer.ttb {
+  -webkit-animation: ttb-drawer-in 0.3s 1ms;
+  animation: ttb-drawer-in 0.3s 1ms;
+}
+
+.drawer.ttb {
+  -webkit-animation: ttb-drawer-out 0.3s;
+  animation: ttb-drawer-out 0.3s;
+  top: 0;
 }
 </style>
