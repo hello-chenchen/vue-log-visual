@@ -1,11 +1,12 @@
 <template>
 <div>
   <transition name="drawer-fade">
-    <div v-show="visible" class="drawer__wrapper" style="z-index: 100">
+    <div v-show="visible" class="drawer__wrapper" style="z-index: 10000">
+      <a href="#" class="close" style="z-index: 10000" @click.self="closeDrawer"></a>
       <div
         class="drawer__container"
         :class="visible && 'drawer__open'"
-        @click.self="handleWrapperClick"
+        @click.self="closeDrawer"
       >
         <div class="drawer ttb">
           <header>test header</header>
@@ -14,7 +15,7 @@
       </div>
     </div>
   </transition>
-<div v-show="visible" class="modal" style="z-index: 99;"></div>
+<div v-show="visible" class="modal" style="z-index: 9999;"></div>
 </div>
 </template>
 <script>
@@ -42,9 +43,6 @@ export default {
         }
         this.closed = true;
       }
-    },
-    handleWrapperClick() {
-        this.closeDrawer();
     },
     closeDrawer() {
       if (typeof this.beforeClose === "function") {
@@ -178,5 +176,31 @@ export default {
   -webkit-animation: ttb-drawer-out 0.3s;
   animation: ttb-drawer-out 0.3s;
   top: 0;
+}
+
+.close {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  width: 32px;
+  height: 32px;
+  opacity: 0.3;
+}
+.close:hover {
+  opacity: 1;
+}
+.close:before, .close:after {
+  position: absolute;
+  left: 15px;
+  content: ' ';
+  height: 20px;
+  width: 2px;
+  background-color: #333;
+}
+.close:before {
+  transform: rotate(45deg);
+}
+.close:after {
+  transform: rotate(-45deg);
 }
 </style>
