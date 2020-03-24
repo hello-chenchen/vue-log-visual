@@ -3,13 +3,13 @@
     <img src="./assets/logo.png">
     <div>
       <button @click="startHacking">Start</button>
-      <Drawer ref="drawer" :visible.sync="visible" :before-close="handleClose"></Drawer>
+      <log-drawer ref="drawer" :visible.sync="visible" :before-close="handleClose" :log-data="data"></log-drawer>
     </div>
   </div>
 </template>
 
 <script>
-import Drawer from './Component/Drawer';
+import LogDrawer from './Component/LogDrawer';
 export default {
   name: "App",
   data () {
@@ -17,15 +17,20 @@ export default {
       direction: 'direction',
       customClass: 'customClass',
       visible: false,
-      demo: true
+      demo: true,
+      data: []
     };
   },
   components: {
-    Drawer
+    LogDrawer
   },
   methods: {
     startHacking() {
-      console.log('startHacking');
+      let log = {};
+      log.type = 'error-message';
+      log.message = 'test log';
+      this.data.push(log);
+
       this.visible = true;
     },
     handleClose(done) {

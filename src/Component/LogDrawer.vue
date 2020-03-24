@@ -9,8 +9,7 @@
         @click.self="closeDrawer"
       >
         <div class="drawer ttb">
-          <header>test header</header>
-          <span>test text</span>
+          <log ref="log" :logs="logData"></log>
         </div>
       </div>
     </div>
@@ -18,13 +17,23 @@
 <div v-show="visible" class="modal" style="z-index: 9999;"></div>
 </div>
 </template>
+
 <script>
+import Log from './Log';
+
 export default {
-  name: "Drawer",
+  name: "LogDrawer",
+  components: {
+    Log
+  },
   data() {
     return {};
   },
   props: {
+    logData: {
+        type: Array,
+        default: []
+    },
     visible: {
       type: Boolean,
       default: false
