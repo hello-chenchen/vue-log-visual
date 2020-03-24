@@ -1,18 +1,21 @@
 <template>
+<div>
   <transition name="drawer-fade">
-    <div v-show="visible" class="drawer__wrapper">
+    <div v-show="visible" class="drawer__wrapper" style="z-index: 100">
       <div
         class="drawer__container"
         :class="visible && 'drawer__open'"
         @click.self="handleWrapperClick"
       >
-        <div class="drawer ttb" style="height: 50%">
+        <div class="drawer ttb">
           <header>test header</header>
           <span>test text</span>
         </div>
       </div>
     </div>
   </transition>
+<div v-show="visible" class="modal" style="z-index: 99;"></div>
+</div>
 </template>
 <script>
 export default {
@@ -24,10 +27,6 @@ export default {
     visible: {
       type: Boolean,
       default: false
-    },
-    wrapperClosable: {
-      type: Boolean,
-      default: true
     },
     beforeClose: {
       type: Function
@@ -45,9 +44,7 @@ export default {
       }
     },
     handleWrapperClick() {
-      if (this.wrapperClosable) {
         this.closeDrawer();
-      }
     },
     closeDrawer() {
       if (typeof this.beforeClose === "function") {
@@ -125,11 +122,21 @@ export default {
   animation: el-drawer-fade-in 0.3s reverse;
 }
 
+.modal {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    opacity: .5;
+    background: #000;
+}
+
 .drawer {
   left: 0;
   right: 0;
   width: 100%;
-  height: 50%;
+  height: 80%;
   position: absolute;
   box-sizing: border-box;
   background-color: #fff;

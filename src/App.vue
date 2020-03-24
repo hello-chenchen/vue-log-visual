@@ -16,7 +16,7 @@ export default {
     return {
       direction: 'direction',
       customClass: 'customClass',
-      visible: true,
+      visible: false,
       demo: true
     };
   },
