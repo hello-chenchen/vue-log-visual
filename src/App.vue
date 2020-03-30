@@ -3,7 +3,7 @@
     <img src="./assets/logo.png">
     <div>
       <button @click="startHacking">Start</button>
-      <log-drawer ref="drawer" :visible.sync="visible" :before-close="handleClose" :log-data="data"></log-drawer>
+      <log-drawer ref="drawer" :log-visible.sync="visible" :before-close="handleClose" :log-data="download" :disable-render="true" :log-data-for-render="data"></log-drawer>
     </div>
   </div>
 </template>
@@ -18,7 +18,9 @@ export default {
       customClass: 'customClass',
       visible: false,
       demo: true,
-      data: []
+      data: [],
+      download: '',
+      count: 0
     };
   },
   components: {
@@ -30,6 +32,7 @@ export default {
       log.type = 'error-message';
       log.message = 'test log';
       this.data.push(log);
+      this.download += log.message + this.count++;
 
       this.visible = true;
     },

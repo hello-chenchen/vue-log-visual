@@ -1,40 +1,58 @@
 <template>
 <div>
   <transition name="drawer-fade">
-    <div v-show="visible" class="drawer__wrapper" style="z-index: 10000">
-      <a href="#" class="close" style="z-index: 10000" @click.self="closeDrawer"></a>
+    <div v-show="logVisible" class="drawer__wrapper" style="z-index: 10000">
+      <a href="#" class="close" @click.self="closeDrawer">Close</a>
+      <a :href="logURL" class="download" target="_blank" download="log.txt">Download</a>
       <div
         class="drawer__container"
-        :class="visible && 'drawer__open'"
+        :class="logVisible && 'drawer__open'"
         @click.self="closeDrawer"
       >
         <div class="drawer ttb">
-          <log ref="log" :logs="logData"></log>
+          <div class="log" v-if="disableRender">
+            <span>{{ logData }}</span>
+          </div>
+          <div v-else>
+            <log-render ref="log" :logs="logDataForRender"></log-render>
+          </div>
         </div>
       </div>
     </div>
   </transition>
-<div v-show="visible" class="modal" style="z-index: 9999;"></div>
+<div v-show="logVisible" class="modal" style="z-index: 9999;"></div>
 </div>
 </template>
 
 <script>
-import Log from './Log';
+import LogRender from './LogRender';
 
 export default {
   name: "LogDrawer",
   components: {
-    Log
+    LogRender
   },
   data() {
-    return {};
+    return {
+      logURL: '#'
+    };
   },
   props: {
     logData: {
-        type: Array,
-        default: []
+      type: String,
+      default: ''
     },
-    visible: {
+    disableRender: {
+      type: Boolean,
+      default: true
+    },
+    logDataForRender: {
+        type: Array,
+        default: () => {
+          return [];
+        }
+    },
+    logVisible: {
       type: Boolean,
       default: false
     },
@@ -42,10 +60,18 @@ export default {
       type: Function
     }
   },
+  watch: {
+    logVisible(val) {
+      if(true === val) {
+        let data = new Blob([this.logData], {type: 'text/plain'});
+        this.logURL = window.URL.createObjectURL(data);
+      }
+    }
+  },
   methods: {
     hide(cancel) {
       if (cancel !== false) {
-        this.$emit("update:visible", false);
+        this.$emit("update:logVisible", false);
         this.$emit("close");
         if (this.destroyOnClose === true) {
           this.rendered = false;
@@ -64,6 +90,11 @@ export default {
 };
 </script>
 <style>
+.log {
+  text-align: left;
+  margin: 10px;
+  overflow: scroll;
+}
 @-webkit-keyframes el-drawer-fade-in {
   0% {
     opacity: 0;
@@ -187,29 +218,18 @@ export default {
   top: 0;
 }
 
-.close {
+a {
   position: absolute;
   right: 10px;
+  text-decoration:none;
+  z-index: 10000;
+}
+
+.close {
   top: 10px;
-  width: 32px;
-  height: 32px;
-  opacity: 0.3;
 }
-.close:hover {
-  opacity: 1;
-}
-.close:before, .close:after {
-  position: absolute;
-  left: 15px;
-  content: ' ';
-  height: 20px;
-  width: 2px;
-  background-color: #333;
-}
-.close:before {
-  transform: rotate(45deg);
-}
-.close:after {
-  transform: rotate(-45deg);
+
+.download {
+  top: 30px;
 }
 </style>
